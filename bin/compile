@@ -122,4 +122,16 @@ set-default-env LIBRARY_PATH "$APP_VENDOR/lib"
 set-default-env LD_LIBRARY_PATH "$APP_VENDOR/lib"
 set-default-env CPATH "$APP_VENDOR/include"
 
+#set path so gdal gem can find gdal-config
+#based on https://github.com/mojodna/heroku-buildpack-gdal/blob/master/bin/compile
+BUILDPACK_DIR=$(cd $(dirname $0)/..; pwd)
+
+cat <<EOF > $BUILDPACK_DIR/export
+export PATH="\$PATH:$BUILD_DIR/$TARGET_VENDOR_DIR/bin"
+export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:$BUILD_DIR/$TARGET_VENDOR_DIR/lib"
+export LIBRARY_PATH="\$LIBRARY_PATH:$BUILD_DIR/$TARGET_VENDOR_DIR/lib"
+export CPPPATH="\$CPPPATH:$BUILD_DIR/$TARGET_VENDOR_DIR/include"
+export CPATH="\$CPATH:$BUILD_DIR/$TARGET_VENDOR_DIR/include"
+EOF
+
 echo "-----> Vendoring geo libraries done"
